@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/gas-common/gas-common.iml" filepath="$PROJECT_DIR$/gas-common/gas-common.iml" />
+      <module fileurl="file://$PROJECT_DIR$/gas-core/gas-core.iml" filepath="$PROJECT_DIR$/gas-core/gas-core.iml" />
+      <module fileurl="file://$PROJECT_DIR$/gas-management-system.iml" filepath="$PROJECT_DIR$/gas-management-system.iml" />
+      <module fileurl="file://$PROJECT_DIR$/gas-service/gas-service.iml" filepath="$PROJECT_DIR$/gas-service/gas-service.iml" />
+    </modules>
+  </component>
+</project>
+
