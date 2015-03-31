@@ -74,4 +74,7 @@ public class DBManager {
         }
     }
 
+    public static DataSource fetchDataSource() {
+        return dataSource;
+    }
 }

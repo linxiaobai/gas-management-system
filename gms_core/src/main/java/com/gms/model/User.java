@@ -79,4 +79,17 @@ public class User {
     public void setModifyTime(Timestamp modifyTime) {
         this.modifyTime = modifyTime;
     }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", username='" + username + '\'' +
+                ", passwd='" + passwd + '\'' +
+                ", realName='" + realName + '\'' +
+                ", userType=" + userType +
+                ", createTime=" + createTime +
+                ", modifyTime=" + modifyTime +
+                '}';
+    }
 }

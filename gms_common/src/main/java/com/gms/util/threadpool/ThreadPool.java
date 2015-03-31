@@ -1,8 +1,10 @@
+package com.gms.util.threadpool;
+
+import java.util.LinkedList;
+
 /**
  * Created by Kevin on 2015/3/26.
  */
-import java.util.LinkedList;
-
 public class ThreadPool extends ThreadGroup{
     private boolean isClosed = false;  //线程池是否关闭
     private LinkedList<Runnable> workQueue; //表示工作队列
