@@ -9,13 +9,20 @@
     <packaging>pom</packaging>
     <version>1.0-SNAPSHOT</version>
     <modules>
-        <module>gas-common</module>
-        <module>gas-core</module>
-        <module>gas-service</module>
+        <module>gms_core</module>
+        <module>gms_common</module>
+        <module>gms_service</module>
+        <module>gms_server</module>
+        <module>gms_client</module>
     </modules>
 
 
     <properties>
         <junit.version>4.11</junit.version>
+        <logback.version>1.1.2</logback.version>
+        <org.slf4j.version>1.7.7</org.slf4j.version>
+        <dbutils.version>1.5</dbutils.version>
+        <dbcp.version>1.4</dbcp.version>
+        <mysql.connector.version>5.1.34</mysql.connector.version>
     </properties>
 </project>
