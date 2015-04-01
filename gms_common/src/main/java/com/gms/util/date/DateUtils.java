@@ -2,6 +2,7 @@ package com.gms.util.date;
 
 
 
+import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -193,7 +194,12 @@ public class DateUtils {
         return Math.abs(date.getTime() - nowTime)/1000;
     }
 
-    public DateUtils() {
+    /**
+     * 获取当前时间
+     * @return 当前时间（格式为Timestamp类型）
+     */
+    public static Timestamp getCurrentTime() {
+        return (new Timestamp(new Date().getTime()));
     }
 
 }

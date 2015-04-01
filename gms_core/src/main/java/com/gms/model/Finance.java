@@ -39,4 +39,13 @@ public class Finance {
     public void setCreateTime(Timestamp createTime) {
         this.createTime = createTime;
     }
+
+    @Override
+    public String toString() {
+        return "Finance{" +
+                "id=" + id +
+                ", fee=" + fee +
+                ", createTime=" + createTime +
+                '}';
+    }
 }

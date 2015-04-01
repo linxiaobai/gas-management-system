@@ -13,7 +13,7 @@ import java.util.Map;
  * Created by Kevin on 2015/3/31.
  * 由于DBUtils里面的BeanProcessor字段和实体变量名映射不支持驼峰规则
  * (例如:数据库里面USER_TYPE这种的字段对应的值取不到userType变量里)
- * 所以需要对其进行重写
+ * 所以需要对其里面的方法进行重写
  */
 public class CustomBeanProcessor extends BeanProcessor{
 
@@ -45,7 +45,7 @@ public class CustomBeanProcessor extends BeanProcessor{
             }
 
             for (int i = 0; i < props.length; i++) {
-                /*主要在这样地方进行改动，把数据库里面的表中的字段替换成空串*/
+                /*主要在这样地方进行改动，把数据库里面的表中的字段中的下划线替换成空串*/
                 if (propertyName.replace("_", "").equalsIgnoreCase(props[i].getName())) {
                     columnToProperty[col] = i;
                     break;
