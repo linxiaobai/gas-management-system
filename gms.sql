@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50618
 File Encoding         : 65001
 
-Date: 2015-04-07 15:48:09
+Date: 2015-04-07 15:59:26
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -95,6 +95,23 @@ CREATE TABLE `menu` (
 
 -- ----------------------------
 -- Records of menu
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for system_param
+-- ----------------------------
+DROP TABLE IF EXISTS `system_param`;
+CREATE TABLE `system_param` (
+  `ID` int(11) NOT NULL,
+  `PARAM_NAME` varchar(45) DEFAULT NULL,
+  `PARAM_VALUE` varchar(45) DEFAULT NULL,
+  `STATUS` smallint(6) DEFAULT NULL,
+  `CREATE_TIME` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Records of system_param
 -- ----------------------------
 
 -- ----------------------------
