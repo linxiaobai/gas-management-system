@@ -10,10 +10,36 @@ Target Server Type    : MYSQL
 Target Server Version : 50618
 File Encoding         : 65001
 
-Date: 2015-04-01 14:28:48
+Date: 2015-04-07 15:48:09
 */
 
 SET FOREIGN_KEY_CHECKS=0;
+
+-- ----------------------------
+-- Table structure for bill
+-- ----------------------------
+DROP TABLE IF EXISTS `bill`;
+CREATE TABLE `bill` (
+  `ID` int(11) NOT NULL,
+  `BILL_SEQUENCE` varchar(255) DEFAULT NULL,
+  `PAYER_PHONE` varchar(20) DEFAULT NULL,
+  `SHD_PAY_MONEY` double DEFAULT NULL,
+  `HANDLER_ID` bigint(20) DEFAULT NULL,
+  `HANDLER_NAME` varchar(45) DEFAULT NULL,
+  `LATE_FEE` double DEFAULT NULL,
+  `ACT_PAY_MONYE` double DEFAULT NULL,
+  `SHD_PAY_DATE` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+  `ACT_PAY_DATE` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+  `STATUS` smallint(6) DEFAULT NULL,
+  `GAS_USE_AMOUNT` double DEFAULT NULL,
+  `CREATE_TIME` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+  `MODIFY_TIME` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Records of bill
+-- ----------------------------
 
 -- ----------------------------
 -- Table structure for device
@@ -41,6 +67,7 @@ DROP TABLE IF EXISTS `finance`;
 CREATE TABLE `finance` (
   `ID` int(11) NOT NULL,
   `FEE` double DEFAULT NULL,
+  `DETAIL` varchar(255) DEFAULT NULL,
   `CREATE_TIME` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`ID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -48,8 +75,8 @@ CREATE TABLE `finance` (
 -- ----------------------------
 -- Records of finance
 -- ----------------------------
-INSERT INTO `finance` VALUES ('1', '10', '2015-04-01 09:44:36');
-INSERT INTO `finance` VALUES ('2', '-20', '2015-04-01 09:44:36');
+INSERT INTO `finance` VALUES ('1', '10', null, '2015-04-01 09:44:36');
+INSERT INTO `finance` VALUES ('2', '-20', null, '2015-04-01 09:44:36');
 
 -- ----------------------------
 -- Table structure for menu
@@ -68,24 +95,6 @@ CREATE TABLE `menu` (
 
 -- ----------------------------
 -- Records of menu
--- ----------------------------
-
--- ----------------------------
--- Table structure for payment
--- ----------------------------
-DROP TABLE IF EXISTS `payment`;
-CREATE TABLE `payment` (
-  `ID` int(11) NOT NULL,
-  `PAYER_PHONE` varchar(20) DEFAULT NULL,
-  `PAY_MONEY` double DEFAULT NULL,
-  `HANDLER_ID` bigint(20) DEFAULT NULL,
-  `HANDLER_NAME` varchar(45) DEFAULT NULL,
-  `CREATE_TIME` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
--- ----------------------------
--- Records of payment
 -- ----------------------------
 
 -- ----------------------------

@@ -14,6 +14,11 @@ public class Finance {
      */
     private Double fee;
 
+    /**
+     * 支出收入明细
+     */
+    private String detail;
+
     private Timestamp createTime;
 
     public Integer getId() {
@@ -40,12 +45,12 @@ public class Finance {
         this.createTime = createTime;
     }
 
-    @Override
-    public String toString() {
-        return "Finance{" +
-                "id=" + id +
-                ", fee=" + fee +
-                ", createTime=" + createTime +
-                '}';
+    public String getDetail() {
+        return detail;
     }
+
+    public void setDetail(String detail) {
+        this.detail = detail;
+    }
+
 }

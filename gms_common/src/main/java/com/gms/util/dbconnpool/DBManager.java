@@ -34,7 +34,7 @@ public class DBManager {
                 conn.close();
             }
         } catch (Exception e) {
-            logger.error("初始化连接池失败：" + e);
+            logger.error("初始化连接池失败：{}", e.getMessage());
         }
     }
 
