@@ -57,6 +57,11 @@
             <version>${dbcp.version}</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>${common.io.version}</version>
+        </dependency>
 
         <dependency>
             <groupId>mysql</groupId>
@@ -64,6 +69,11 @@
             <version>${mysql.connector.version}</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>${common.lang3.version}</version>
+        </dependency>
     </dependencies>
 
 

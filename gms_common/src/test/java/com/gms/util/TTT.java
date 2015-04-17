@@ -1,10 +1,8 @@
 package com.gms.util;
 
-import com.gms.model.Finance;
-import com.gms.model.User;
+import com.gms.Finance;
 import com.gms.util.date.DateUtils;
 import com.gms.util.dbutil.ConvertUtil;
-import com.gms.util.dbutil.SQLUtil;
 
 import java.util.ArrayList;
 import java.util.List;

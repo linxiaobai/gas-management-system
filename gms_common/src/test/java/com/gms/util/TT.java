@@ -1,6 +1,6 @@
 package com.gms.util;
 
-import com.gms.model.User;
+import com.gms.User;
 import com.gms.util.dbconnpool.DBManager;
 import com.gms.util.dbutil.CustomBeanProcessor;
 import com.gms.util.dbutil.QueryRunnerFactory;

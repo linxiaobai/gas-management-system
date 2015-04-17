@@ -9,7 +9,7 @@ public class ThreadPoolManager {
     public static final int THREADPOOLSIZE = 15;
     private static ThreadPool threadPool;
 
-    static {
+    static { //只会在类初始化的时候加载一次
         threadPool =  new ThreadPool(THREADPOOLSIZE);
         if (threadPool == null) {
             throw new UtilException("初始化线程池失败");
