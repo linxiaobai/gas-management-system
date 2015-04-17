@@ -1,6 +1,8 @@
 package com.gms.socket;
 
 import com.gms.util.SystemConstantUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
@@ -13,6 +15,7 @@ import java.security.KeyStore;
  * Created by Kevin on 2015/4/17.
  */
 public class SSLClient {
+    private static final Logger logger = LoggerFactory.getLogger(SSLClient.class);
     /*从参数配置工具类中读取相关参数*/
     private static final String DEFAULT_HOST = SystemConstantUtils.getSystemDataSource().get("serverIp");
     private static final int DEFAULT_PORT = Integer.valueOf(SystemConstantUtils.getSystemDataSource().get("serverPort"));
@@ -29,13 +32,13 @@ public class SSLClient {
     public static void main(String[] args) {
         SSLClient client = new SSLClient();
         client.init();
-        client.process();
+        client.process("s");
     }
 
     /**
      * 通过ssl socket与服务端进行连接,并且发送一个消息
      */
-    public void process() {
+    public void process(String transData) {
         if (sslSocket == null) {
             System.out.println("ERROR");
             return;
@@ -44,19 +47,18 @@ public class SSLClient {
             InputStream input = sslSocket.getInputStream();
             OutputStream output = sslSocket.getOutputStream();
 
-            BufferedInputStream bis = new BufferedInputStream(input);
-            BufferedOutputStream bos = new BufferedOutputStream(output);
+            DataInputStream dis = new DataInputStream(input);
+            DataOutputStream dos = new DataOutputStream(output);
 
-            bos.write("试试中文".getBytes());
-            bos.flush();
+            dos.writeUTF(transData);
+            dos.flush();
 
-            byte[] buffer = new byte[20];
-            bis.read(buffer);
-            System.out.println(new String(buffer));
+            String ret = dis.readUTF();
+            logger.info("登录结果：" + ret);
 
             sslSocket.close();
         } catch (IOException e) {
-            System.out.println(e);
+            logger.error("向服务器端请求数据出错，原因:{}", e.getMessage());
         }
     }
 
@@ -87,7 +89,7 @@ public class SSLClient {
 
             sslSocket = (SSLSocket) ctx.getSocketFactory().createSocket(DEFAULT_HOST, DEFAULT_PORT);
         } catch (Exception e) {
-            System.out.println(e);
+            logger.error("初始化ssl客户端socket出错:{}",e.getMessage());
         }
     }
 }

@@ -1,6 +1,7 @@
 package com.gms.socket;
 
 import com.gms.util.SystemConstantUtils;
+import com.gms.util.date.DateUtils;
 import com.gms.util.threadpool.ThreadPoolManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -74,22 +75,10 @@ public class SSLServer extends JFrame{
         while (true) {
             try {
                 Socket s = serverSocket.accept();
-                InputStream input = s.getInputStream();
-                OutputStream output = s.getOutputStream();
-
-                BufferedInputStream bis = new BufferedInputStream(input);
-                BufferedOutputStream bos = new BufferedOutputStream(output);
-
-                byte[] buffer = new byte[20];
-                bis.read(buffer);
-                System.out.println(new String(buffer));
-
-                bos.write("Server Echo".getBytes());
-                bos.flush();
-
-                s.close();
+                clients.add(new ClientConn(s));
+                jTextArea.append("一个客户端已连接" + s.getInetAddress() + ":" + s.getPort()+", time:"+ DateUtils.getCurrentTime() + "\n");
             } catch (Exception e) {
-                System.out.println(e);
+                logger.error("服务器端接收客户端socket报错，原因：{}", e.getMessage());
             }
         }
     }
@@ -168,9 +157,9 @@ public class SSLServer extends JFrame{
                 String str = dis.readUTF();
                 while(str != null && str.length() != 0) {
                     logger.info("服务端接收到从ip为{}的客户端发送过来的消息{}",socket.getInetAddress(),str);
-                    str = dis.readUTF();//少了这句话会无限输出
                     DealClientRequest dealClientRequest = DealClientRequestFactory.fetchDealClientRequest();
                     String responseStr = dealClientRequest.DealRequest(str);
+                    logger.info("处理并返回数据：{}",responseStr);
                     send(responseStr);
                 }
                 this.dispose();

@@ -1,6 +1,6 @@
 package com.gms.util;
 
-import com.gms.Finance;
+import com.gms.bean.po.Finance;
 import com.gms.util.date.DateUtils;
 import com.gms.util.dbutil.ConvertUtil;
 

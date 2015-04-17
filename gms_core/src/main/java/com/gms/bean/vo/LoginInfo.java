@@ -3,7 +3,7 @@ package com.gms.bean.vo;
 /**
  * Created by Kevin on 2015/4/16.
  */
-public class LoginInfo {
+public class LoginInfo extends BaseBean{
     private String username;
     private String password;
 

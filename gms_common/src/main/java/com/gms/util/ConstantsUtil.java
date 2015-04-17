@@ -5,7 +5,6 @@ package com.gms.util;
  * 所有功能模块业务处理的标志
  */
 public interface ConstantsUtil {
-    public static String VOPREFIX = "com.gms.bean.vo.";
 
     public static int LOGIN_INFO = 1;
 

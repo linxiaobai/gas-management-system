@@ -1,11 +1,10 @@
 package com.gms.service;
 
 import com.alibaba.fastjson.JSONObject;
-import com.gms.User;
+import com.gms.bean.po.User;
 import com.gms.bean.vo.LoginInfo;
 import com.gms.util.ApiResultBuilder;
 import com.gms.util.ConstantsUtil;
-import com.gms.util.StringUtil;
 import com.gms.util.dbutil.SQLUtil;
 import org.apache.commons.lang3.StringUtils;
 
@@ -33,6 +32,6 @@ public class UserService {
                     .withRet(false);
         }
 
-        return JSONObject.toJSONString(apiResultBuilder);
+        return JSONObject.toJSONString(apiResultBuilder.getApiResult());
     }
 }

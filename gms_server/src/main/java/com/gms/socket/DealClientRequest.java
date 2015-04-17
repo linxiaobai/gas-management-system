@@ -29,9 +29,10 @@ public class DealClientRequest {
         }
         int code = transJsonObject.getCode();
         StringBuffer responseMsg = new StringBuffer("");
-        switch (code) {
+        switch (code) { //针对transJsonObject里面的object需要再转一次
             case 1:
-                responseMsg.append(userService.login((LoginInfo)transJsonObject.getDataObject()));
+                responseMsg.append(userService.login(JSONObject.parseObject(transJsonObject.getDataObject().toString(),
+                        LoginInfo.class)));
         }
 
         return responseMsg.toString();
