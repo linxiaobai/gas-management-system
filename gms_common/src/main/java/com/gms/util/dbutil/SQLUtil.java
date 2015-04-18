@@ -129,7 +129,7 @@ public class SQLUtil {
      * @param <T>
      * @return
      */
-    public static <T> List<T> selectBeanList(String sql, Class<T> type, Object[] params) {
+    public static <T> List<T> selectBeanList(String sql, Class<T> type, Object... params) {
         CustomBeanProcessor convert = new CustomBeanProcessor();
         RowProcessor rp = new BasicRowProcessor(convert);
         ResultSetHandler<List<T>> bh = new BeanListHandler<T>(type, rp);

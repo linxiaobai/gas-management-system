@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.List;
 
@@ -62,5 +63,36 @@ public class ConvertUtil {
     protected static String buildGetMethodStr(String str) {
         String getMethodName = "get"+Character.toUpperCase(str.charAt(0))+str.substring(1);
         return getMethodName;
+    }
+
+    /**
+     * 对象转一维数组，返回数据用于单个对象插入数据库
+     * 需要保证对象中每个成员变量有值
+     *
+     * 好像可变参数不可以直接用数组代替，暂时用不到这个方法
+     */
+    @Deprecated
+    public static Object[] objectToArr(Object o) {
+        if (o == null) {
+            return null;
+        }
+        Class clazz = o.getClass();
+        Field[] fields = clazz.getFields();
+        Object[] objArr = new Object[fields.length];
+        String[] methodNames = new String[fields.length];
+        for (int n = 0; n < fields.length; n++) {
+            methodNames[n] = buildGetMethodStr(fields[n].getName()); //获取实体类中所有get方法对应的name
+        }
+
+        for (int i = 0; i < fields.length; i++) {
+            try {
+                Method m = clazz.getDeclaredMethod(methodNames[i]);
+                objArr[i] = m.invoke(o);
+            } catch (Exception e) {
+                logger.error("对象转一维数组异常：{}", e.getMessage());
+            }
+        }
+
+        return objArr;
     }
 }

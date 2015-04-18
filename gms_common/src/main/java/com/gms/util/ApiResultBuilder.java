@@ -4,11 +4,13 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Created by Xia on 2014/8/30.
+ * Created by Kevin on 2014/8/30.
  */
 public class ApiResultBuilder {
 
     private Map<String, Object> apiResultMap = new HashMap<String, Object>();
+
+    public ApiResultBuilder() {}
 
     public ApiResultBuilder(Integer version){
         apiResultMap.put("ver", version);

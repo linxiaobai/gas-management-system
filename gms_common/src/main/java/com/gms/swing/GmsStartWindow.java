@@ -14,11 +14,11 @@ public class GmsStartWindow extends JWindow{
     JLabel pic;
 
     //构造函数
-    public GmsStartWindow(String picName, JFrame f, int waitTime) {
-        super(f);
+    public GmsStartWindow(String picName, final JFrame frame, int waitTime) {
+        super(frame);
         String path = PathUtil.fetchPath(this.getClass(), picName);
         ImageIcon image = new ImageIcon(path);
-        JLabel pic      = new JLabel(image);
+        JLabel pic = new JLabel(image);
 
         this.getContentPane().add(pic, BorderLayout.CENTER);
         //调整图片大小到屏幕中央
@@ -34,6 +34,8 @@ public class GmsStartWindow extends JWindow{
             public void run() {
                 setVisible(false);
                 dispose();
+                frame.setVisible(true);
+                frame.setLocationRelativeTo(null);
                 //System.exit(0);
             }
         };		//End closerRunner

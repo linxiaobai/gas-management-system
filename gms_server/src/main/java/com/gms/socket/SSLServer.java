@@ -15,6 +15,7 @@ import java.awt.*;
 import java.io.*;
 import java.net.Socket;
 import java.security.KeyStore;
+import java.util.Date;
 import java.util.LinkedList;
 
 
@@ -44,19 +45,19 @@ public class SSLServer extends JFrame{
     private LinkedList<ClientConn> clients = new LinkedList<ClientConn>(); //存放客户端连接对象
 
     public SSLServer(String name) {
-        this.setName(name);
+        super(name);
         initFrame();
     }
 
     private void initFrame() {
         setLayout(new FlowLayout());
-        jTextArea =new JTextArea(20, 17);
+        jTextArea =new JTextArea(40, 34);
         jTextArea.setLineWrap(true);
         jTextArea.setEditable(false);
         this.getContentPane().add(new JScrollPane(jTextArea));
         setVisible(true);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(200,400);
+        setSize(400,600);
         setLocationRelativeTo(null);
         setResizable(false);
     }
@@ -76,7 +77,10 @@ public class SSLServer extends JFrame{
             try {
                 Socket s = serverSocket.accept();
                 clients.add(new ClientConn(s));
-                jTextArea.append("一个客户端已连接" + s.getInetAddress() + ":" + s.getPort()+", time:"+ DateUtils.getCurrentTime() + "\n");
+                jTextArea.append("一个客户端已连接!\n");
+                jTextArea.append("对应ip:" +  s.getInetAddress() + ";对应端口号:" + s.getPort() + ";\n登录时间:"
+                        + DateUtils.formatDateTime(new Date()) + "\n");
+                jTextArea.append("当前客户端连接数：" + clients.size() + "\n");
             } catch (Exception e) {
                 logger.error("服务器端接收客户端socket报错，原因：{}", e.getMessage());
             }
@@ -131,10 +135,12 @@ public class SSLServer extends JFrame{
             } catch (IOException e) {
                 logger.error("客户端发送信息异常，原因{}",e.getMessage());
             } finally {
-                try {
-                    dos.close();
-                } catch (IOException e) {
-                    logger.error("服务器端关闭数据流异常！{}",e.getMessage());
+                if (dos != null) {
+                    try {
+                        dos.close();
+                    } catch (IOException e) {
+                        logger.error("客户端关闭输出流出错!原因：{}", e.getMessage());
+                    }
                 }
             }
         }
@@ -154,15 +160,16 @@ public class SSLServer extends JFrame{
         public void run() {
             try {
                 DataInputStream dis = new DataInputStream(socket.getInputStream());
+
                 String str = dis.readUTF();
-                while(str != null && str.length() != 0) {
+                //TODO 这里用if能否读完所有的数据
+                if (str != null && str.length() != 0) {
                     logger.info("服务端接收到从ip为{}的客户端发送过来的消息{}",socket.getInetAddress(),str);
                     DealClientRequest dealClientRequest = DealClientRequestFactory.fetchDealClientRequest();
                     String responseStr = dealClientRequest.DealRequest(str);
                     logger.info("处理并返回数据：{}",responseStr);
                     send(responseStr);
                 }
-                this.dispose();
             } catch (Exception e) {
                 logger.error("服务器端接收并处理客户端请求或者关闭客户端连接异常:{}",e.getMessage());
             } finally {

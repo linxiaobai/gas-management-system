@@ -12,14 +12,31 @@
         </encoder>
     </appender>
 
-    <root level="info">
-        <appender-ref ref="console"/>
+    <appender name="logfile" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>G:\log\gms.log</file>
+        <!-- 可让每天产生一个日志文件，最多 10 个，自动回滚 -->
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>/opt/logs/mige56-%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>10</maxHistory>
+        </rollingPolicy>
+
+        <encoder charset="UTF-8">
+            <pattern>[%d{yyyy-MM-dd HH:mm:ss} %5p %c:%L] %m%n</pattern>
+        </encoder>
+    </appender>
+
+    <root level="warn">
+        <appender-ref ref="logfile"/>
     </root>
 
-    <logger name="java.sql.Connection" level="info"/>
-    <logger name="java.sql.Statement" level="info" />
-    <logger name="java.sql.PreparedStatement" level="info"/>
-    <logger name="java.sql.ResultSet" level="info"/>
+    <root level="info">
+        <appender-ref ref="console" />
+    </root>
+
+    <logger name="java.sql.Connection" level="debug"/>
+    <logger name="java.sql.Statement" level="debug" />
+    <logger name="java.sql.PreparedStatement" level="debug"/>
+    <logger name="java.sql.ResultSet" level="debug"/>
 
 
 </configuration>

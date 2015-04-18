@@ -9,6 +9,6 @@ import javax.swing.*;
  */
 public class TestStartWindow {
     public static void main(String[] args) {
-        GmsStartWindow gmsStartWindow = new GmsStartWindow("pic/Login.gif",new JFrame(),2000);
+        GmsStartWindow gmsStartWindow = new GmsStartWindow("pic/starting.png",new JFrame(),2000);
     }
 }
