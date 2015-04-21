@@ -15,7 +15,7 @@ public class StartServer {
      */
     public static void main(String[] args) {
         SSLServer server = new SSLServer("自动化燃气管理系统服务器端");
-        logger.warn("警告程序员！！！项目启动啦！{}");
+        logger.warn("警告程序员！！！项目启动啦！");
         server.init();
         server.start();
     }

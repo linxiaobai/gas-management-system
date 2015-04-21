@@ -13,7 +13,11 @@ import java.util.List;
  */
 public class TestFrame {
     public static void main(String[] args) {
-        GmsMenuItem[] items = GmsMenuItem.fetchItems("开始导航", "刷新系统", "退出系统");
+        List<String> list = new ArrayList<String>();
+        list.add("开始导航");
+        list.add("刷新系统");
+        list.add("退出系统");
+        GmsMenuItem[] items = GmsMenuItem.fetchItems(list);
         List<String> itemList = new ArrayList<String>();
         itemList.add("开始导航");
         itemList.add("刷新系统");

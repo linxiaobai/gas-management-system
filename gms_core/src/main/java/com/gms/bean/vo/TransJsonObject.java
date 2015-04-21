@@ -9,6 +9,11 @@ public class TransJsonObject {
 
     public TransJsonObject(){}
 
+    public TransJsonObject(int code) {
+        this.dataObject =  "default";
+        this.code = code;
+    }
+
     public TransJsonObject(Object object, int code) {
         this.dataObject = object;
         this.code = code;

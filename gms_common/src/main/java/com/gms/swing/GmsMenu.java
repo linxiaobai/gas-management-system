@@ -23,14 +23,14 @@ public class GmsMenu extends JMenu{
     public GmsMenu addItems(boolean isSep, List<String> jMenuItems) {
         if (isSep) { //是否需要在每个item之间增加分隔符
             for (int i = 0; i < jMenuItems.size(); i++) {
-                this.add(jMenuItems.get(i));
+                this.add(new GmsMenuItem(jMenuItems.get(i)));
                 if (i != (jMenuItems.size() - 1)) { //如果不是最后一个item,则增加一个分隔符
                     this.addSeparator();
                 }
             }
         } else {
             for (int i = 0; i < jMenuItems.size(); i++) {
-                this.add(jMenuItems.get(i));
+                this.add(new GmsMenuItem(jMenuItems.get(i)));
             }
         }
         return this;

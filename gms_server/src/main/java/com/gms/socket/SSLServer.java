@@ -1,5 +1,6 @@
 package com.gms.socket;
 
+import com.gms.swing.GmsBaseFrame;
 import com.gms.util.SystemConstantUtils;
 import com.gms.util.date.DateUtils;
 import com.gms.util.threadpool.ThreadPoolManager;
@@ -12,6 +13,8 @@ import javax.net.ssl.SSLServerSocket;
 import javax.net.ssl.TrustManagerFactory;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.*;
 import java.net.Socket;
 import java.security.KeyStore;
@@ -30,7 +33,7 @@ import java.util.LinkedList;
  * <li>keytool -import -alias serverkey -file server.crt -keystore tclient.keystore</li>
  * </ul>
  */
-public class SSLServer extends JFrame{
+public class SSLServer extends GmsBaseFrame{
     private static Logger logger = LoggerFactory.getLogger(SSLServer.class);
 
 
@@ -56,7 +59,6 @@ public class SSLServer extends JFrame{
         jTextArea.setEditable(false);
         this.getContentPane().add(new JScrollPane(jTextArea));
         setVisible(true);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(400,600);
         setLocationRelativeTo(null);
         setResizable(false);
@@ -118,6 +120,8 @@ public class SSLServer extends JFrame{
             e.printStackTrace();
         }
     }
+
+
 
 
     class ClientConn implements Runnable{ //内部客户端连接类

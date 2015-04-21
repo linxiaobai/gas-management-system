@@ -1,6 +1,7 @@
 package com.gms.swing;
 
 import javax.swing.*;
+import java.util.List;
 
 /**
  * Created by Kevin on 2015/4/8.
@@ -18,10 +19,10 @@ public class GmsMenuItem extends JMenuItem{
      * @param names
      * @return
      */
-    public static GmsMenuItem[] fetchItems(String... names) {
-        GmsMenuItem[] gmsMenuItems = new GmsMenuItem[names.length];
-        for (int i = 0; i < names.length; i++) {
-            gmsMenuItems[i] =  new GmsMenuItem(names[i]);
+    public static GmsMenuItem[] fetchItems(List<String> names) {
+        GmsMenuItem[] gmsMenuItems = new GmsMenuItem[names.size()];
+        for (int i = 0; i < names.size(); i++) {
+            gmsMenuItems[i] =  new GmsMenuItem(names.get(i));
         }
         return gmsMenuItems;
     }

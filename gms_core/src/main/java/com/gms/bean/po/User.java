@@ -20,6 +20,8 @@ public class User {
      */
     private Byte userType;
 
+    private String mobilePhone;
+
     private Timestamp createTime;
 
     private Timestamp modifyTime;
@@ -64,6 +66,14 @@ public class User {
         this.userType = userType;
     }
 
+    public String getMobilePhone() {
+        return mobilePhone;
+    }
+
+    public void setMobilePhone(String mobilePhone) {
+        this.mobilePhone = mobilePhone;
+    }
+
     public Timestamp getCreateTime() {
         return createTime;
     }
@@ -88,6 +98,7 @@ public class User {
                 ", passwd='" + passwd + '\'' +
                 ", realName='" + realName + '\'' +
                 ", userType=" + userType +
+                ", mobilePhone='" + mobilePhone + '\'' +
                 ", createTime=" + createTime +
                 ", modifyTime=" + modifyTime +
                 '}';

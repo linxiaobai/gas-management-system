@@ -1,6 +1,8 @@
 package com.gms.swing;
 
 import javax.swing.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 /**
  * Created by Kevin on 2015/4/18.
@@ -10,6 +12,13 @@ public class GmsBaseFrame extends JFrame{
 
     public GmsBaseFrame(String name) {
         super(name);
+        this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+        //加窗口监听 new WindowAdapter适配器类
+        this.addWindowListener(new WindowAdapter() {
+            public void windowClosing(WindowEvent we) {
+                quit();
+            }//End windowClosing
+        });
     }
 
     protected void quit() {
@@ -21,5 +30,15 @@ public class GmsBaseFrame extends JFrame{
             System.exit(0);
         }//End if(flag == JOptionPane.YES_OPTION)
         return;
+    }
+
+    /**
+     * 初始化panel数组
+     * @param jPanels
+     */
+    protected void initJPanels(JPanel[] jPanels) {
+        for (int i = 0; i < jPanels.length; i++) {
+            jPanels[i] = new JPanel();
+        }
     }
 }

@@ -6,16 +6,21 @@ package com.gms.util;
  */
 public interface ConstantsUtil {
 
-    public static int LOGIN_INFO = 1;
+    public static byte ADMIN_USER = 1;
+
+    public static byte NORMAL_USER = 2;
+
+    /*以下数字不可轻易做变动，关联到DealClientRequest.java里面的switch模块代码*/
+    public static int LOGIN_INFO = 1; //登录信息
+
+    public static int MENUS_INFO = 2; //请求所有菜单数据
+
+    public static int MENUS_SETTING = 3; //配置普通管理员相关权限
+
+    public static int USER_ADD = 4;
 
 
 
 
-
-
-    /*error code*/
-
-    public static int LOGIN_ERROR = 100;
-    public static String LOGIN_ERROR_MSG = "用户名或密码有误";
 
 }

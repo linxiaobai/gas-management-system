@@ -1,6 +1,8 @@
 package com.gms.util;
 
 import java.awt.Color;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -9,8 +11,7 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 
-public class TestJMenu extends JFrame
-{
+public class TestJMenu extends JFrame implements ActionListener {
     private JFrame frame;// 窗体
     private JMenuBar mBar;// 菜单
     private JPanel panel;// 面板
@@ -53,7 +54,7 @@ public class TestJMenu extends JFrame
         xItem = new JMenuItem("学院简介");
         jMenu.add(xItem);
         // 工具添加选项菜单
-        JMenuItem xyItem, ycItem;
+        JMenuItem xyItem = null, ycItem;
         xyItem = new JMenuItem("显示菜单");
         ycItem = new JMenuItem("隐藏菜单");
         gMenu.add(xyItem);
@@ -81,5 +82,10 @@ public class TestJMenu extends JFrame
     public static void main(String[] args)
     {
         new TestJMenu();
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+
     }
 }

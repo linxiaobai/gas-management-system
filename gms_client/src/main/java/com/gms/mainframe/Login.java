@@ -8,7 +8,6 @@ import com.gms.socket.SSLClientUtil;
 import com.gms.swing.GmsBaseFrame;
 import com.gms.swing.GmsFrameStandard;
 import com.gms.util.ConstantsUtil;
-import com.gms.util.JsonMsgObj;
 import com.gms.util.MD5Util;
 import com.gms.util.ServerRet;
 import org.apache.commons.lang3.StringUtils;
@@ -84,20 +83,8 @@ public class Login extends GmsBaseFrame implements ActionListener,KeyListener,Gm
         //移到startWindow里面
 //        this.setVisible(true);
 //        this.setLocationRelativeTo(null);
-        //加窗口监听 new WindowAdapter适配器类
-        this.addWindowListener(new WindowAdapter() {
-            public void windowClosing(WindowEvent we) {
-                quit();
-                System.exit(0);
-            }//End windowClosing
-        });
     }
 
-    private void initJPanels(JPanel[] jPanels) {
-        for (int i = 0; i < jPanels.length; i++) {
-            jPanels[i] = new JPanel();
-        }
-    }
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == loginBtn) {
