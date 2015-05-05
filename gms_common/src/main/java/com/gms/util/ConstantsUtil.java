@@ -17,7 +17,11 @@ public interface ConstantsUtil {
 
     public static int MENUS_SETTING = 3; //配置普通管理员相关权限
 
-    public static int USER_ADD = 4;
+    public static int USER_ADD = 4; //用户添加
+
+    public static int USER_LIST = 5; //列出用户信息
+
+    public static int USER_DEL = 6;
 
 
 

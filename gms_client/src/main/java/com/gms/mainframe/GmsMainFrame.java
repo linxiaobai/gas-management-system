@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.gms.bean.po.Menus;
 import com.gms.bean.po.User;
 import com.gms.bean.vo.TransJsonObject;
+import com.gms.component.UserTableModel;
 import com.gms.socket.SSLClientUtil;
 import com.gms.swing.*;
 import com.gms.util.ConstantsUtil;
@@ -11,12 +12,15 @@ import com.gms.util.FormatUtils;
 import com.gms.util.MD5Util;
 import com.gms.util.ServerRet;
 import com.gms.util.date.DateUtils;
+import com.gms.util.dbutil.ConvertUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -124,9 +128,14 @@ public class GmsMainFrame extends GmsBaseFrame implements ActionListener,ItemLis
                 contentPanel.add(intiAuthDisJPanel());
                 contentPanel.revalidate();
                 contentPanel.repaint();
-            } else if ("userAdd".equals(actionCommand)) {
+            } else if ("userAdd".equals(actionCommand)) { //用户添加
                 contentPanel.removeAll();
                 contentPanel.add(initUserAddJPanel());
+                contentPanel.revalidate();
+                contentPanel.repaint();
+            } else if ("userDel".equals(actionCommand)) { //用户删除
+                contentPanel.removeAll();
+                contentPanel.add(initDelUser());
                 contentPanel.revalidate();
                 contentPanel.repaint();
             }
@@ -134,9 +143,9 @@ public class GmsMainFrame extends GmsBaseFrame implements ActionListener,ItemLis
     }
 
     /**
-     * =======================
-     * 权限分配布局界面  start
-     * =======================
+     * =============
+     * 权限分配布局界面
+     * =============
      */
     private JPanel intiAuthDisJPanel() {
         JPanel jPanel = new JPanel();
@@ -186,7 +195,7 @@ public class GmsMainFrame extends GmsBaseFrame implements ActionListener,ItemLis
             }
         }
         /*设置纵向*/
-        checkBoxPanel.setLayout(new GridLayout(parentsMenus.size() + 1,1));
+        checkBoxPanel.setLayout(new GridLayout(parentsMenus.size() + 2,1));
 
         for (Menus parentsMenu : parentsMenus) {
             /*有一组父类则实例一个JPanel*/
@@ -222,10 +231,12 @@ public class GmsMainFrame extends GmsBaseFrame implements ActionListener,ItemLis
                 ServerRet serverRet = SSLClientUtil.sendAndReciveMsg(transJsonObject);
                 if (serverRet.isRet()) {
                     msgLab.setForeground(Color.GREEN);
+                    msgLab.setText(serverRet.getData().toString());
                 } else {
                     msgLab.setForeground(Color.RED);
+                    msgLab.setText(serverRet.getErrmsg());
                 }
-                msgLab.setText(serverRet.getData().toString());
+
             }
         });
         return jPanel;
@@ -304,7 +315,7 @@ public class GmsMainFrame extends GmsBaseFrame implements ActionListener,ItemLis
                         mobilePhone.setText("");
                         realName.setText("");
                     } else {
-                        msgLab.setText(serverRet.getData().toString());
+                        msgLab.setText(serverRet.getErrmsg());
                     }
                 }
             }
@@ -318,6 +329,64 @@ public class GmsMainFrame extends GmsBaseFrame implements ActionListener,ItemLis
         return mainPanel;
     }
 
+    /**
+     * =============
+     *  删除用户模块
+     * =============
+     */
+    private JPanel initDelUser() {
+        JPanel mainPanel = new JPanel();
+        mainPanel.setLayout(new FlowLayout());
+        //获取数据库中所有普通用户信息
+        TransJsonObject transJsonObject = new TransJsonObject(ConstantsUtil.USER_LIST);
+        ServerRet serverRet = SSLClientUtil.sendAndReciveMsg(transJsonObject);
+        List<User> users = JSONObject.parseArray(serverRet.getData().toString(), User.class);
+        final JScrollPane jScrollPane = listUserTable(users);
+        mainPanel.add(jScrollPane);
+        final JLabel msgLab = new JLabel("");
+        JButton jButton = new JButton("删除用户");
+        jButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                JTable jTable = (JTable) jScrollPane.getViewport().getView();
+                msgLab.setText("已选中第"+jTable.getSelectedRow()+"行");
+                String username = jTable.getValueAt(jTable.getSelectedRow(),0).toString();
+                TransJsonObject transJsonObject = new TransJsonObject(username, ConstantsUtil.USER_DEL);
+                ServerRet innerServerRet = SSLClientUtil.sendAndReciveMsg(transJsonObject);
+                //TODO 增加数据库交互操作
+                if (innerServerRet.isRet()) {
+                    msgLab.setForeground(Color.GREEN);
+                    msgLab.setText(innerServerRet.getData().toString());
+                    //同步表格显示的部分，在表格中删除一行
+                    ((DefaultTableModel)jTable.getModel()).removeRow(jTable.getSelectedRow());
+                    validate();
+                } else {
+                    msgLab.setForeground(Color.RED);
+                    msgLab.setText(innerServerRet.getErrmsg());
+                }
+            }
+        });
+        mainPanel.add(jButton);
+        mainPanel.add(msgLab);
+        return mainPanel;
+    }
+
+    /**
+     * 展示所用用户容器
+     * @param users
+     * @return
+     */
+    private JScrollPane listUserTable(List<User> users) {
+        Object[][] data = ConvertUtil.listToArr(users, User.class, "username", "realName", "mobilePhone", "createTime");
+        String[] names = {"用户名", "真实姓名", "手机号码", "注册时间"};
+        UserTableModel myTableModel = new UserTableModel(data, names);
+        JTable jTable = new JTable(myTableModel);
+        //在UserTableModel里重写了父类的isCellEditable保证其不可编辑，在这里设置true仅使其可以选择
+        jTable.setEnabled(true);
+        jTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        JScrollPane scrollPane = new JScrollPane(jTable);
+        return scrollPane;
+    }
 
 
 }

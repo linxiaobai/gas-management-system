@@ -1,5 +1,6 @@
-package com.gms.mainframe;
+package com.gms;
 
+import com.gms.mainframe.Login;
 import com.gms.swing.GmsStartWindow;
 
 /**

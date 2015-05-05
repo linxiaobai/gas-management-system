@@ -4,7 +4,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.List;
 
@@ -24,7 +23,7 @@ public class ConvertUtil {
      * @param clazz 实体类类型
      * @return
      */
-    public static Object[][] listToArr(List<Object> list,Class clazz) {
+    public static <T> Object[][] listToArr(List<T> list, Class<T> clazz) {
         if (list == null || list.size() == 0) {
             return null;
         }
@@ -55,6 +54,45 @@ public class ConvertUtil {
         return retArr;
     }
 
+
+    /**
+     * @param list
+     * @param clazz
+     * @param needNames 需要转成二维数组数据的字段
+     * @param <T>
+     * @return
+     */
+    public static <T> Object[][] listToArr(List<T> list, Class<T> clazz, String... needNames) {
+        if (list == null || list.size() == 0) {
+            return null;
+        }
+
+        if (needNames.length == 0) {
+            return null;
+        }
+        String[] methodNames = new String[needNames.length];
+        for (int i = 0; i < needNames.length; i++) {
+            methodNames[i] = buildGetMethodStr(needNames[i]);
+        }
+
+        Object[][] retArr = new Object[list.size()][];
+        for (int i = 0; i < list.size(); i++) {
+            //成员变量的数目对应着单个对象的字段数目
+            Object[] array =  new Object[needNames.length];
+            for (int j = 0; j < methodNames.length; j++) {
+                try {
+                    Method m = clazz.getDeclaredMethod(methodNames[j]);
+                    array[j] = m.invoke(list.get(i));
+                } catch (Exception e) {
+                    logger.error("集合转成二维数组异常,{}", e.getMessage());
+                }
+            }
+            retArr[i] = array;
+        }
+        return retArr;
+    }
+
+
     /**
      * 构建getXx类型的字符串
      * 例如 getName
@@ -77,7 +115,7 @@ public class ConvertUtil {
             return null;
         }
         Class clazz = o.getClass();
-        Field[] fields = clazz.getFields();
+        Field[] fields = clazz.getDeclaredFields();
         Object[] objArr = new Object[fields.length];
         String[] methodNames = new String[fields.length];
         for (int n = 0; n < fields.length; n++) {
@@ -94,6 +132,20 @@ public class ConvertUtil {
         }
 
         return objArr;
+    }
+
+    /**
+     * 获取一个类的所有成员变量名（即对于数据库里面表的字段名称）
+     * @return
+     */
+    public static String[] fetchVariableNames(Class clazz) {
+        Field[] fields = clazz.getDeclaredFields();
+        String[] names = new String[fields.length];
+        for (int i = 0; i < fields.length; i++) {
+            names[i] = fields[i].getName();
+
+        }
+        return names;
     }
 
 }

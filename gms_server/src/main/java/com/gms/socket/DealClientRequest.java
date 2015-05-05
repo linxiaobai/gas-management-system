@@ -1,6 +1,5 @@
 package com.gms.socket;
 
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.gms.bean.po.User;
 import com.gms.bean.vo.LoginInfo;
@@ -54,6 +53,12 @@ public class DealClientRequest {
             case 4:
                 responseMsg.append(userService.addUser(JSONObject.parseObject(transJsonObject.getDataObject().toString(),
                         User.class)));
+                break;
+            case 5:
+                responseMsg.append(userService.queryAll());
+                break;
+            case 6:
+                responseMsg.append(userService.deleteUser(transJsonObject.getDataObject().toString()));
                 break;
             default:
                 logger.warn("请求码‘{}’不存在，请对比查看ConstantsUtils", code);

@@ -13,7 +13,6 @@ public interface ErrorMessage {
     public static int USERNAME_IS_EXIST = 101;
     public static String USERNAME_IS_EXIST_ERROR = "用户名已经被使用";
 
-
     public static int SELECT_EMPTY = 200;
     public static String SELECT_EMPTY_MSG = "数据异常，查询结果集为空";
 

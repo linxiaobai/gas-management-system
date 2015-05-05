@@ -27,7 +27,7 @@ public class TTT {
                 {1,10, DateUtils.getCurrentTime()},
                 {2,-20,DateUtils.getCurrentTime()}
         };
-        List<Object> financeList = new ArrayList<Object>();
+        List<Finance> financeList = new ArrayList<Finance>();
         for (int i = 3; i < 10; i++) {
             Finance f = new Finance();
             f.setId(i);

@@ -25,11 +25,19 @@ public class UserService {
     /*查询用户是否被注册sql*/
     private static final String CHECK_USERNAME = "SELECT * FROM USER WHERE USERNAME = ?";
     /*用户添加*/
-    private static final String INSER_USER_SQL = "INSERT INTO USER(USERNAME, PASSWD, REAL_NAME, MOBILE_PHONE, USER_TYPE, CREATE_TIME, MODIFY_TIME)" +
+    private static final String INSERT_USER_SQL = "INSERT INTO USER(USERNAME, PASSWD, REAL_NAME, MOBILE_PHONE, USER_TYPE, CREATE_TIME, MODIFY_TIME)" +
             "VALUES(?, ?, ?, ?, ?, ?, ?)";
+    private static final String DELETE_USER_SQL = "DELETE FROM USER WHERE USERNAME = ?";//根据用户名删除用户，用户名是唯一的
+    /*查询所有普通用户*/
+    private static final String QUERY_ALL_USER = "SELECT * FROM USER WHERE USER_TYPE = ?";
     /*返回查询结果菜单*/
     private static final String MENUS_QUERY_SQL = "SELECT * FROM MENUS WHERE USER_TYPE = ? AND IS_VALID = ?";
 
+    /**
+     * 用户登录校验
+     * @param loginInfo
+     * @return
+     */
     public String login(LoginInfo loginInfo) {
         ApiResultBuilder apiResultBuilder = new ApiResultBuilder(1);
         //如果传输的数据存在问题，则不执行sql操作直接返回错误信息
@@ -53,13 +61,18 @@ public class UserService {
         return JSONObject.toJSONString(apiResultBuilder.getApiResult());
     }
 
+    /**
+     * 添加用户
+     * @param user
+     * @return
+     */
     public String addUser(User user) {
         ApiResultBuilder apiResultBuilder = new ApiResultBuilder(1);
-
+        logger.info("添加用户{}",user);
         if (SQLUtil.selectBean(CHECK_USERNAME, User.class, user.getUsername()) != null) {
             apiResultBuilder.withRet(false).withErrcode(ErrorMessage.USERNAME_IS_EXIST).withErrmsg(ErrorMessage.USERNAME_IS_EXIST_ERROR);
         } else {
-            int ret = SQLUtil.insertOne(INSER_USER_SQL, user.getUsername(), user.getPasswd(), user.getRealName(), user.getMobilePhone(), user.getUserType(), user.getCreateTime(), user.getModifyTime());
+            int ret = SQLUtil.insertOne(INSERT_USER_SQL, user.getUsername(), user.getPasswd(), user.getRealName(), user.getMobilePhone(), user.getUserType(), user.getCreateTime(), user.getModifyTime());
             if (ret > 0) {
                 apiResultBuilder.withRet(true).withData("用户添加成功");
             } else {
@@ -69,5 +82,35 @@ public class UserService {
 
         return JSONObject.toJSONString(apiResultBuilder.getApiResult());
     }
+
+    /**
+     * 查询所有普通用户信息
+     * @return
+     */
+    public String queryAll() {
+        ApiResultBuilder apiResultBuilder = new ApiResultBuilder(1);
+        logger.info("查询所有普通用户");
+        List<User> users = SQLUtil.selectBeanList(QUERY_ALL_USER, User.class, ConstantsUtil.NORMAL_USER);
+        apiResultBuilder.withRet(true).withData(users);
+        return JSONObject.toJSONString(apiResultBuilder.getApiResult());
+    }
+
+    /**
+     * 根据用户名删除用户
+     * @param username
+     * @return
+     */
+    public String deleteUser(String username) {
+        logger.info("删除用户名为{}的用户", username);
+        ApiResultBuilder apiResultBuilder = new ApiResultBuilder(1);
+        int ret = SQLUtil.updateOne(DELETE_USER_SQL, username);
+        if (ret > 0) {
+            apiResultBuilder.withRet(true).withData("删除用户成功");
+        } else {
+            apiResultBuilder.withRet(false).withErrcode(ErrorMessage.SQL_ERROR).withErrmsg(ErrorMessage.SQL_ERROR_MSG);
+        }
+        return JSONObject.toJSONString(apiResultBuilder.getApiResult());
+    }
+
 
 }

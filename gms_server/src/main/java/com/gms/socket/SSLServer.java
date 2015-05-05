@@ -128,6 +128,7 @@ public class SSLServer extends GmsBaseFrame{
         private Socket socket;
         public ClientConn(Socket socket) {
             this.socket = socket;
+            //加入到线程池的工作队列中防止多用户时线程阻塞
             ThreadPoolManager.getThreadPool().execute(this);
         }
 
