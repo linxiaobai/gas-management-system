@@ -1,12 +1,13 @@
 package com.gms.bean.po;
 
+import java.io.Serializable;
 import java.sql.Timestamp;
 
 /**
  * Created by Kevin on 2015/3/30.
  * 系统开支记录表
  */
-public class Finance {
+public class Finance implements Serializable {
     private Integer id;
 
     /**

@@ -2,6 +2,7 @@ package com.gms.mainframe;
 
 import com.alibaba.fastjson.JSONObject;
 import com.gms.bean.po.Menus;
+import com.gms.bean.po.User;
 import com.gms.bean.vo.LoginInfo;
 import com.gms.bean.vo.TransJsonObject;
 import com.gms.socket.SSLClientUtil;
@@ -96,16 +97,17 @@ public class Login extends GmsBaseFrame implements ActionListener,KeyListener,Gm
                 loginInfo.setPassword(MD5Util.GetMD5Code(new String(jPasswordField.getPassword())));
                 TransJsonObject transJsonObject = new TransJsonObject(loginInfo, ConstantsUtil.LOGIN_INFO);
                 ServerRet serverRet = SSLClientUtil.sendAndReciveMsg(transJsonObject);
-                logger.info("解析服务器端返回结果:{}", serverRet);
                 if (serverRet != null) {
                     if (serverRet.isRet()) {
                         this.setVisible(false);
-                        List<Menus> menuses = JSONObject.parseArray(serverRet.getData().toString(), Menus.class);
-                        new GmsMainFrame("自动化燃气管理系统主界面", menuses);
-                        System.out.println("");
+//                        List<Menus> menuses = JSONObject.parseArray(serverRet.getData().toString(), Menus.class);
+                        User user = JSONObject.parseObject(serverRet.getData().toString(), User.class);
+                        new GmsMainFrame("自动化燃气管理系统", user);
                     } else {
                         msgLab.setText(clue + serverRet.getErrmsg());
                     }
+                } else {
+                    JOptionPane.showMessageDialog(null,"服务器端连接失败！");
                 }
             }
 

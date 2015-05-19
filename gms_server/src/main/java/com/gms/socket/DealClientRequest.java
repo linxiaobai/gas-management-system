@@ -1,12 +1,14 @@
 package com.gms.socket;
 
 import com.alibaba.fastjson.JSONObject;
+import com.gms.bean.po.Device;
 import com.gms.bean.po.User;
 import com.gms.bean.vo.LoginInfo;
 import com.gms.bean.vo.TransJsonObject;
-import com.gms.service.MenuService;
-import com.gms.service.UserService;
+import com.gms.service.*;
+import com.gms.service.impl.*;
 import com.gms.util.ApiResultBuilder;
+import com.gms.util.ConstantsUtil;
 import com.gms.util.GmsException;
 import com.gms.util.error.ErrorMessage;
 import org.slf4j.Logger;
@@ -22,8 +24,12 @@ public class DealClientRequest {
 
     private static Logger logger = LoggerFactory.getLogger(DealClientRequest.class);
 
-    private UserService userService = new UserService();
-    private MenuService menuService = new MenuService();
+    private UserService userService = new UserServiceImpl();
+    private MenuService menuService = new MenuServiceImpl();
+    private DeviceService deviceService = new DeviceServiceImpl();
+    private EnvironmentalParamService environmentalParamService = new EnvironmentalParamServiceImpl();
+    private RuntimeDeviceService runtimeDeviceService = new RuntimeDeviceServiceImpl();
+    private RepairedRecordService repairedRecordService = new RepairedRecordServiceImpl();
 
     /**
      * @param transMsg
@@ -44,7 +50,7 @@ public class DealClientRequest {
                         LoginInfo.class)));
                 break;
             case 2:
-                responseMsg.append(menuService.queryAll());
+                responseMsg.append(menuService.queryAll(Byte.valueOf(transJsonObject.getDataObject().toString()), false));
                 break;
             case 3:
                 responseMsg.append(menuService.distributeAuth(JSONObject.parseObject(transJsonObject.getDataObject().toString(),
@@ -59,6 +65,37 @@ public class DealClientRequest {
                 break;
             case 6:
                 responseMsg.append(userService.deleteUser(transJsonObject.getDataObject().toString()));
+                break;
+            case 7:
+                responseMsg.append(deviceService.queryAll());
+                break;
+            case 8:
+                responseMsg.append(deviceService.addDevice(JSONObject.parseObject(transJsonObject.getDataObject().toString(),
+                        Device.class)));
+                break;
+            case 9:
+                String str = transJsonObject.getDataObject().toString();
+                Integer deviceId = Integer.valueOf(str.substring(0, str.indexOf(",")));
+                String userName = str.substring(str.indexOf(",") + 1);
+                responseMsg.append(deviceService.fixDevice(deviceId, userName));
+                break;
+            case 10:
+                responseMsg.append(environmentalParamService.queryAll());
+                break;
+            case 11:
+                responseMsg.append(menuService.queryAll(Byte.valueOf(transJsonObject.getDataObject().toString()), true));
+                break;
+            case 12:
+                responseMsg.append(environmentalParamService.queryBySize(ConstantsUtil.DATA_SIZE));
+                break;
+            case 13:
+                responseMsg.append(runtimeDeviceService.queryAvgData());
+                break;
+            case 14:
+                responseMsg.append(repairedRecordService.queryAll());
+                break;
+            case 15:
+                responseMsg.append(runtimeDeviceService.queryAll());
                 break;
             default:
                 logger.warn("请求码‘{}’不存在，请对比查看ConstantsUtils", code);

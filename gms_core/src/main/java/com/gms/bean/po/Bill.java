@@ -1,12 +1,13 @@
 package com.gms.bean.po;
 
+import java.io.Serializable;
 import java.sql.Timestamp;
 
 /**
  * Created by Kevin on 2015/3/30.
  * 燃气使用居民用户缴费记录表
  */
-public class Bill {
+public class Bill implements Serializable{
     private Integer id;
 
     /**

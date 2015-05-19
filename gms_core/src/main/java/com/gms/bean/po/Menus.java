@@ -1,10 +1,12 @@
 package com.gms.bean.po;
 
+import java.io.Serializable;
+
 /**
  * Created by Kevin on 2015/3/30.
  * 客户端显示对应的菜单表
  */
-public class Menus {
+public class Menus implements Serializable {
     private Integer id;
 
     /**

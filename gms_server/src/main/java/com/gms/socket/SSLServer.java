@@ -1,9 +1,15 @@
 package com.gms.socket;
 
 import com.gms.swing.GmsBaseFrame;
+import com.gms.timer.TimerStart;
+import com.gms.util.ConstantsUtil;
+import com.gms.util.FormatUtils;
 import com.gms.util.SystemConstantUtils;
 import com.gms.util.date.DateUtils;
 import com.gms.util.threadpool.ThreadPoolManager;
+
+import java.io.*;
+import java.util.Timer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -13,9 +19,8 @@ import javax.net.ssl.SSLServerSocket;
 import javax.net.ssl.TrustManagerFactory;
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.io.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.net.Socket;
 import java.security.KeyStore;
 import java.util.Date;
@@ -27,7 +32,7 @@ import java.util.LinkedList;
  * <ul>
  * <li>1)生成服务端私钥</li>
  * <li>keytool -genkey -alias serverkey -keystore kserver.keystore</li>
- * <li>2)根据私钥,到处服务端证书</li>
+ * <li>2)根据私钥,导出服务端证书</li>
  * <li>keytool -exoport -alias serverkey -keystore kserver.keystore -file server.crt</li>
  * <li>3)把证书加入到客户端受信任的keystore中</li>
  * <li>keytool -import -alias serverkey -file server.crt -keystore tclient.keystore</li>
@@ -39,6 +44,10 @@ public class SSLServer extends GmsBaseFrame{
 
     /*swing 成员变量*/
     private JTextArea jTextArea = null;
+    private JButton jButton = null;
+    private JPanel mainPanel = null;
+    /*timer*/
+    private Timer timer = null;
 
     /*ssl服务器相关参数,从配置参数工具类中读取*/
     private static final int DEFAULT_PORT = Integer.valueOf(SystemConstantUtils.getSystemDataSource().get("serverPort"));
@@ -53,23 +62,44 @@ public class SSLServer extends GmsBaseFrame{
     }
 
     private void initFrame() {
-        setLayout(new FlowLayout());
+        this.setLayout(new FlowLayout());
+        mainPanel = new JPanel(new BorderLayout());
         jTextArea =new JTextArea(40, 34);
         jTextArea.setLineWrap(true);
         jTextArea.setEditable(false);
-        this.getContentPane().add(new JScrollPane(jTextArea));
+        mainPanel.add(new JScrollPane(jTextArea), BorderLayout.CENTER);
+        jButton = new JButton("启动数据模拟");
+        jButton.setBackground(Color.GREEN);
+        jButton.setSize(new Dimension(60,40));
+        jButton.setActionCommand("startTimer");
+        jButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (e.getSource() == jButton) {
+                    if ("startTimer".equals(jButton.getActionCommand())) {
+                        timer = new Timer(true);
+                        //服务器端跑一个定时任务模拟数据的插入
+                        ThreadPoolManager.getThreadPool().execute(new TimerStart(timer));
+                        jButton.setText("停止数据模拟");
+                        jButton.setActionCommand("stopTimer");
+                        jButton.setBackground(Color.RED);
+                    } else if("stopTimer".equals(jButton.getActionCommand())) {
+                        timer.cancel();
+                        jButton.setText("启动数据模拟");
+                        jButton.setActionCommand("startTimer");
+                        jButton.setBackground(Color.GREEN);
+                    }
+                }
+            }
+        });
+        mainPanel.add(jButton,BorderLayout.NORTH);
+        this.getContentPane().add(mainPanel);
         setVisible(true);
         setSize(400,600);
         setLocationRelativeTo(null);
         setResizable(false);
     }
 
-    /**
-     * <ul>
-     * <li>听SSL Server Socket</li>
-     * <li> 由于该程序不是演示Socket监听，所以简单采用单线程形式，并且仅仅接受客户端的消息，并且返回客户端指定消息</li>
-     * </ul>
-     */
     public void start() {
         if (serverSocket == null) {
             System.out.println("ERROR");
@@ -136,15 +166,42 @@ public class SSLServer extends GmsBaseFrame{
             DataOutputStream dos = null;
             try {
                 dos = new DataOutputStream(socket.getOutputStream());
-                dos.writeUTF(msg);
+                if (msg.length() > ConstantsUtil.PACKAGE_SIZE) { //超过数据包数据后对数据进行拆解
+                    int part = (int)Math.ceil((double) msg.length() / ConstantsUtil.PACKAGE_SIZE);
+                    dos.writeUTF(String.valueOf(part));
+                    dos.flush();
+                    int mod = 0;
+                    if (part * ConstantsUtil.PACKAGE_SIZE > msg.length()) {
+                        mod = msg.length() % ConstantsUtil.PACKAGE_SIZE;
+                    }
+                    int count = 0;
+                    while (count < part) {
+                        if (count == part - 1) {
+                            String tempStr = msg.substring(0,mod);
+                            dos.writeUTF(tempStr);
+                            dos.flush();
+                        } else {
+                            String tempStr = msg.substring(0,ConstantsUtil.PACKAGE_SIZE);
+                            msg = msg.substring(ConstantsUtil.PACKAGE_SIZE);
+                            dos.writeUTF(tempStr);
+                            dos.flush();
+                        }
+                        count++;
+                    }
+                } else {
+                    dos.writeUTF(String.valueOf(1));
+                    dos.flush();
+                    dos.writeUTF(msg);
+                    dos.flush();
+                }
             } catch (IOException e) {
-                logger.error("客户端发送信息异常，原因{}",e.getMessage());
+                logger.error("服务器端发送信息异常，原因{}",e.getMessage());
             } finally {
                 if (dos != null) {
                     try {
                         dos.close();
                     } catch (IOException e) {
-                        logger.error("客户端关闭输出流出错!原因：{}", e.getMessage());
+                        logger.error("服务器端关闭输出流出错!原因：{}", e.getMessage());
                     }
                 }
             }

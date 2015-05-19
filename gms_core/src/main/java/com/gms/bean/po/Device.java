@@ -1,43 +1,50 @@
 package com.gms.bean.po;
 
-import java.sql.Timestamp;
+import java.io.Serializable;
 
 /**
  * Created by Kevin on 2015/3/30.
  * 设备记录表
  */
-public class Device {
+public class Device implements Serializable {
+    /**
+     * 设备号
+     */
     private Integer id;
 
     /**
-     * 参数名
+     * 设备名称
      */
-    private String paramName;
+    private String deviceName;
 
     /**
-     * 参数值
+     * 当前压强值
      */
-    private String paramValue;
+    private Double paVal;
+
+    private Double paMinVal;
+
+    private Double paMaxVal;
 
     /**
-     * 正常范围的临界最小值
+     *  设备当前温度
      */
-    private Double minValue;
+    private Double tempVal;
+
+    private Double tempMinVal;
+
+    private Double tempMaxVal;
 
     /**
-     * 正常范围的临界最大值
+     * 当前水位值
      */
-    private Double maxValue;
+    private Double waterLevelVal;
 
-    /**
-     * 是否损坏
-     */
+    private Double wlMinVal;
+
+    private Double wlMaxVal;
+
     private Byte isFailed;
-
-    /**
-     * 检修时间点
-     */
-    private Timestamp repairTime;
 
     public Integer getId() {
         return id;
@@ -47,36 +54,84 @@ public class Device {
         this.id = id;
     }
 
-    public String getParamName() {
-        return paramName;
+    public String getDeviceName() {
+        return deviceName;
     }
 
-    public void setParamName(String paramName) {
-        this.paramName = paramName;
+    public void setDeviceName(String deviceName) {
+        this.deviceName = deviceName;
     }
 
-    public String getParamValue() {
-        return paramValue;
+    public Double getPaVal() {
+        return paVal;
     }
 
-    public void setParamValue(String paramValue) {
-        this.paramValue = paramValue;
+    public void setPaVal(Double paVal) {
+        this.paVal = paVal;
     }
 
-    public Double getMinValue() {
-        return minValue;
+    public Double getPaMinVal() {
+        return paMinVal;
     }
 
-    public void setMinValue(Double minValue) {
-        this.minValue = minValue;
+    public void setPaMinVal(Double paMinVal) {
+        this.paMinVal = paMinVal;
     }
 
-    public Double getMaxValue() {
-        return maxValue;
+    public Double getPaMaxVal() {
+        return paMaxVal;
     }
 
-    public void setMaxValue(Double maxValue) {
-        this.maxValue = maxValue;
+    public void setPaMaxVal(Double paMaxVal) {
+        this.paMaxVal = paMaxVal;
+    }
+
+    public Double getTempVal() {
+        return tempVal;
+    }
+
+    public void setTempVal(Double tempVal) {
+        this.tempVal = tempVal;
+    }
+
+    public Double getTempMinVal() {
+        return tempMinVal;
+    }
+
+    public void setTempMinVal(Double tempMinVal) {
+        this.tempMinVal = tempMinVal;
+    }
+
+    public Double getTempMaxVal() {
+        return tempMaxVal;
+    }
+
+    public void setTempMaxVal(Double tempMaxVal) {
+        this.tempMaxVal = tempMaxVal;
+    }
+
+    public Double getWaterLevelVal() {
+        return waterLevelVal;
+    }
+
+    public void setWaterLevelVal(Double waterLevelVal) {
+        this.waterLevelVal = waterLevelVal;
+    }
+
+    public Double getWlMinVal() {
+        return wlMinVal;
+    }
+
+    public void setWlMinVal(Double wlMinVal) {
+        this.wlMinVal = wlMinVal;
+    }
+
+    public Double getWlMaxVal() {
+        return wlMaxVal;
+    }
+
+    public void setWlMaxVal(Double wlMaxVal) {
+        this.wlMaxVal = wlMaxVal;
     }
 
     public Byte getIsFailed() {
@@ -87,11 +142,13 @@ public class Device {
         this.isFailed = isFailed;
     }
 
-    public Timestamp getRepairTime() {
-        return repairTime;
-    }
-
-    public void setRepairTime(Timestamp repairTime) {
-        this.repairTime = repairTime;
+    @Override
+    public String toString() {
+        return "Device{" +
+                "paVal=" + paVal +
+                ", tempVal=" + tempVal +
+                ", waterLevelVal=" + waterLevelVal +
+                ", isFailed=" + isFailed +
+                '}';
     }
 }

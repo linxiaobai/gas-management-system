@@ -43,8 +43,6 @@ public class DBManager {
 
     /**
      * 获取链接，用完后记得关闭
-     *
-     * @see {@link DBManager#closeConn(Connection)}
      * @return
      */
     public static final Connection getConn() {
@@ -59,9 +57,7 @@ public class DBManager {
 
     /**
      * 关闭连接
-     *
-     * @param conn
-     *            需要关闭的连接
+     * @param conn 需要关闭的连接
      */
     public static void closeConn(Connection conn) {
         try {

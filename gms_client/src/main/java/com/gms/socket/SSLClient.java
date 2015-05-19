@@ -24,22 +24,22 @@ public class SSLClient {
 
     private SSLSocket sslSocket;
 
-    /**
-     * 启动客户端程序
-     *
-     * @param args
-     */
-    public static void main(String[] args) {
-        SSLClient client = new SSLClient();
-        client.init();
-        client.process("s");
-    }
+//    /**
+//     * 启动客户端程序
+//     *
+//     * @param args
+//     */
+//    public static void main(String[] args) {
+//        SSLClient client = new SSLClient();
+//        client.init();
+//        client.process("s");
+//    }
 
     /**
      * 通过ssl socket与服务端进行连接,并且发送一个消息
      */
     public String process(String transData) {
-        String ret = "";
+        StringBuffer ret = new StringBuffer("");
         if (sslSocket == null) {
             System.out.println("ERROR");
             return null;
@@ -54,14 +54,17 @@ public class SSLClient {
             dos.writeUTF(transData);
             dos.flush();
 
-            ret = dis.readUTF();
+            int partCount = Integer.valueOf(dis.readUTF()); //第一次接受获取服务器端需要传输的次数
+            for (int i = 0; i < partCount; i++) {
+                ret.append(dis.readUTF());
+            }
             logger.info("服务器端数据处理返回结果：{}", ret);
 
             sslSocket.close();
         } catch (IOException e) {
             logger.error("向服务器端请求数据出错，原因:{}", e.getMessage());
         }
-        return ret;
+        return ret.toString();
     }
 
     /**

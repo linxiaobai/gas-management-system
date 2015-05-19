@@ -1,12 +1,13 @@
 package com.gms.bean.po;
 
+import java.io.Serializable;
 import java.sql.Timestamp;
 
 /**
  * Created by Kevin on 2015/3/30.
  * 用户表
  */
-public class User {
+public class User implements Serializable {
     private Long id;
 
     private String username;

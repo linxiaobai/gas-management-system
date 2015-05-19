@@ -1,12 +1,13 @@
 package com.gms.bean.po;
 
+import java.io.Serializable;
 import java.sql.Timestamp;
 
 /**
  * Created by Kevin on 2015/4/7.
  * 系统参数表
  */
-public class SystemParam {
+public class SystemParam implements Serializable {
     private Integer id;
 
     /**
