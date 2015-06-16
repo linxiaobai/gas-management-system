@@ -93,7 +93,7 @@ public class Login extends GmsBaseFrame implements ActionListener,KeyListener,Gm
             if (validateLogin()) { //校验登录信息
                 LoginInfo loginInfo = new LoginInfo();
                 loginInfo.setUsername(usernameTextField.getText().trim());
-                /*密码用md5处理一下再传到server端*/
+                /*密码用md5摘要算法处理一下再传到server端*/
                 loginInfo.setPassword(MD5Util.GetMD5Code(new String(jPasswordField.getPassword())));
                 TransJsonObject transJsonObject = new TransJsonObject(loginInfo, ConstantsUtil.LOGIN_INFO);
                 ServerRet serverRet = SSLClientUtil.sendAndReciveMsg(transJsonObject);

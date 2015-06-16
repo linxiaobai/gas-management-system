@@ -3,6 +3,7 @@ package com.gms.swing;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.swing.*;
+import java.awt.*;
 
 /**
  * Created by Kevin on 2015/4/8.
@@ -17,6 +18,11 @@ public class GmsPanel extends JPanel{
 
     public GmsPanel(String name) {
         super();
+        this.name = name;
+    }
+
+    public GmsPanel(String name, LayoutManager layoutManager) {
+        super(layoutManager);
         this.name = name;
     }
 

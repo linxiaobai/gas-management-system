@@ -1,8 +1,10 @@
 package com.gms.socket;
 
 import com.alibaba.fastjson.JSONObject;
+import com.gms.bean.po.Bill;
 import com.gms.bean.po.Device;
 import com.gms.bean.po.User;
+import com.gms.bean.vo.DealBill;
 import com.gms.bean.vo.LoginInfo;
 import com.gms.bean.vo.TransJsonObject;
 import com.gms.service.*;
@@ -30,11 +32,13 @@ public class DealClientRequest {
     private EnvironmentalParamService environmentalParamService = new EnvironmentalParamServiceImpl();
     private RuntimeDeviceService runtimeDeviceService = new RuntimeDeviceServiceImpl();
     private RepairedRecordService repairedRecordService = new RepairedRecordServiceImpl();
-
+    private FinanceService financeService = new FinanceServiceImpl();
+    private BillService billService = new BillServiceImpl();
     /**
      * @param transMsg
      * @return
      * @throws GmsException
+     * @see com.gms.util.ConstantsUtil
      */
     public String DealRequest(String transMsg) throws GmsException {
         TransJsonObject transJsonObject = JSONObject.parseObject(transMsg, TransJsonObject.class);
@@ -96,6 +100,25 @@ public class DealClientRequest {
                 break;
             case 15:
                 responseMsg.append(runtimeDeviceService.queryAll());
+                break;
+            case 16:
+                responseMsg.append(financeService.queryAll());
+                break;
+            case 17:
+                ApiResultBuilder orderSequence = new ApiResultBuilder(1);
+                orderSequence.withData(OrderSequenceService.fetchOrderSequence()).withRet(true);
+                responseMsg.append(JSONObject.toJSONString(orderSequence.getApiResult()));
+                break;
+            case 18:
+                responseMsg.append(billService.createOrder(JSONObject.parseObject(transJsonObject.getDataObject().toString(),
+                        Bill.class)));
+                break;
+            case 19:
+                responseMsg.append(billService.queryAllUnPaidBill());
+                break;
+            case 20:
+                DealBill dealBill = JSONObject.parseObject(transJsonObject.getDataObject().toString(), DealBill.class);
+                responseMsg.append(billService.dealBill(dealBill.getOrderSequence(), dealBill.getPayMoney()));
                 break;
             default:
                 logger.warn("请求码‘{}’不存在，请对比查看ConstantsUtils", code);

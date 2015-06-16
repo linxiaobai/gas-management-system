@@ -1,8 +1,8 @@
 package com.gms.util.error;
 
 /**
- * Created by wangzhen on 2015/2/12.
- * 错误信息接口枚举
+ * Created by Kevin on 2015/2/12.
+ * 错误信息
  */
 public interface ErrorMessage {
 

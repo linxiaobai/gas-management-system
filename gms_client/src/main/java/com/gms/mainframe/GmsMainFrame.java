@@ -2,6 +2,7 @@ package com.gms.mainframe;
 
 import com.alibaba.fastjson.JSONObject;
 import com.gms.bean.po.*;
+import com.gms.bean.vo.DealBill;
 import com.gms.bean.vo.DeviceAvgData;
 import com.gms.bean.vo.TransJsonObject;
 import com.gms.component.CustomTableModel;
@@ -167,10 +168,15 @@ public class GmsMainFrame extends GmsBaseFrame implements ActionListener,ItemLis
                 jTabbedPane.addTab("设备维修记录", initDeviceRepairedRecord());
             } else if ("deviceDataExport".equals(actionCommand)) {
                 jTabbedPane.addTab("设备运行数据", initRuntimeDeviceData());
+            } else if ("accountManage".equals(actionCommand)) {
+                jTabbedPane.addTab("账户管理", initAccountManage());
+            } else if ("payManagement".equals(actionCommand)) {
+                jTabbedPane.addTab("缴费管理", initPayManagement());
             }
             jTabbedPane.setSelectedComponent(gmsPanel);
         }
     }
+
 
     /**
      * =============
@@ -284,12 +290,11 @@ public class GmsMainFrame extends GmsBaseFrame implements ActionListener,ItemLis
 
     /**
      * =======================
-     * 增加用户模块
+     *      增加用户模块
      * =======================
      */
     private GmsPanel initUserAddJPanel() {
         GmsPanel mainPanel = new GmsPanel("userAdd");
-        mainPanel.setBackground(Color.BLUE);
         JPanel userAddPanel = new JPanel();
         userAddPanel.setLayout(new GridLayout(6, 1));
         JPanel[] jPanels = new JPanel[4];
@@ -299,7 +304,7 @@ public class GmsMainFrame extends GmsBaseFrame implements ActionListener,ItemLis
         jPanels[0].add(usernameLab);
         jPanels[0].add(username);
         JLabel passwdLab = new JLabel("登录密码");
-        final JTextField passwd = new JTextField(13);
+        final JPasswordField passwd = new JPasswordField(13);
         jPanels[1].add(passwdLab);
         jPanels[1].add(passwd);
         JLabel realNameLab = new JLabel("姓名");
@@ -317,7 +322,7 @@ public class GmsMainFrame extends GmsBaseFrame implements ActionListener,ItemLis
             @Override
             public void actionPerformed(ActionEvent e) {
                 String usernameText = username.getText();
-                String passwdText = passwd.getText();
+                String passwdText = String.valueOf(passwd.getPassword());
                 String realNameText = realName.getText();
                 String mobilePhoneText = mobilePhone.getText();
                 if (StringUtils.isBlank(usernameText) || StringUtils.isBlank(passwdText)
@@ -345,6 +350,7 @@ public class GmsMainFrame extends GmsBaseFrame implements ActionListener,ItemLis
                         realName.setText("");
                     } else {
                         msgLab.setText(serverRet.getErrmsg());
+                        msgLab.setForeground(Color.RED);
                     }
                 }
             }
@@ -581,6 +587,7 @@ public class GmsMainFrame extends GmsBaseFrame implements ActionListener,ItemLis
     }
 
     private GmsPanel showDevice(GmsPanel gmsPanel, List<Device> devices) {
+        //图片会影响到布局
         String path = PathUtil.fetchPath(this.getClass(), "pic/ranqi.png");
         ImageIcon image = new ImageIcon(path);
         JPanel[] jPanel = new JPanel[devices.size()];
@@ -590,6 +597,7 @@ public class GmsMainFrame extends GmsBaseFrame implements ActionListener,ItemLis
             JButton jButton = new JButton(devices.get(i).getDeviceName(), image);
             jButton.setActionCommand(devices.get(i).getId() + "," + user.getRealName());//将设备编号设置到button隐藏的command里面
             final boolean[] checkDevice = checkIsWaring(devices.get(i));
+            //判断设备状态
             if (devices.get(i).getIsFailed() == 1) {
                 jButton.setBackground(Color.RED);
             } else if (validateBooleanArr(checkDevice)) {
@@ -663,32 +671,34 @@ public class GmsMainFrame extends GmsBaseFrame implements ActionListener,ItemLis
     private boolean[] checkIsWaring(Device device) {
         boolean[] ret = new boolean[6]; //默认值均为false(正常)  下标 0 1表示压强 过低过高  2 3表示温度过低过高  4 5表示水位过低过高
 
-        /*各个参数的警戒差值，即报警条件*/
-        double paWaringDiffVal = (device.getPaMaxVal() - device.getPaMinVal()) * 0.1;
-        double tempWaringDiffVal = (device.getTempMaxVal() - device.getTempMinVal()) * 0.1;
-        double wlWaringDiffVal = (device.getWlMaxVal() - device.getWlMinVal()) * 0.1;
-        if (device.getPaVal() - device.getPaMinVal() < paWaringDiffVal) {
-            ret[0] = true;
-        }
+        if (device.getTempVal() != null && device.getPaVal() != null || device.getWaterLevelVal() != null) {
+            /*各个参数的警戒差值，即报警条件*/
+            double paWaringDiffVal = (device.getPaMaxVal() - device.getPaMinVal()) * 0.1;
+            double tempWaringDiffVal = (device.getTempMaxVal() - device.getTempMinVal()) * 0.1;
+            double wlWaringDiffVal = (device.getWlMaxVal() - device.getWlMinVal()) * 0.1;
+            if (device.getPaVal() - device.getPaMinVal() < paWaringDiffVal) {
+                ret[0] = true;
+            }
 
-        if (device.getPaMaxVal() - device.getPaVal() < paWaringDiffVal) {
-            ret[1] = true;
-        }
+            if (device.getPaMaxVal() - device.getPaVal() < paWaringDiffVal) {
+                ret[1] = true;
+            }
 
-        if (device.getTempVal() - device.getTempMinVal() < tempWaringDiffVal) {
-            ret[2] = true;
-        }
+            if (device.getTempVal() - device.getTempMinVal() < tempWaringDiffVal) {
+                ret[2] = true;
+            }
 
-        if (device.getTempMaxVal() - device.getTempVal() < tempWaringDiffVal) {
-            ret[3] = true;
-        }
+            if (device.getTempMaxVal() - device.getTempVal() < tempWaringDiffVal) {
+                ret[3] = true;
+            }
 
-        if (device.getWaterLevelVal() - device.getWlMinVal() < wlWaringDiffVal) {
-            ret[4] = true;
-        }
+            if (device.getWaterLevelVal() - device.getWlMinVal() < wlWaringDiffVal) {
+                ret[4] = true;
+            }
 
-        if (device.getWlMaxVal() - device.getWaterLevelVal() < wlWaringDiffVal) {
-            ret[5] = true;
+            if (device.getWlMaxVal() - device.getWaterLevelVal() < wlWaringDiffVal) {
+                ret[5] = true;
+            }
         }
         return ret;
     }
@@ -768,6 +778,7 @@ public class GmsMainFrame extends GmsBaseFrame implements ActionListener,ItemLis
         jButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                //切换条形折线图
                 cardLayout.show(chartPanel, e.getActionCommand());
                 if ("bar".equals(e.getActionCommand())) {
                     jButton.setActionCommand("line");
@@ -933,4 +944,231 @@ public class GmsMainFrame extends GmsBaseFrame implements ActionListener,ItemLis
         JScrollPane scrollPane = new JScrollPane(jTable);
         return scrollPane;
     }
+
+    /**
+     * ===========================
+     *          账户管理
+     * ===========================
+     */
+    private GmsPanel initAccountManage() {
+        GmsPanel mainPanel = new GmsPanel("accountManage");
+        mainPanel.setLayout(new BorderLayout());
+        TransJsonObject transJsonObject = new TransJsonObject(ConstantsUtil.FINANCE_LIST);
+        ServerRet serverRet = SSLClientUtil.sendAndReciveMsg(transJsonObject);
+        List<Finance> finances = JSONObject.parseArray(serverRet.getData().toString(), Finance.class);
+        JScrollPane jScrollPane = listFinanceData(finances);
+        mainPanel.add(jScrollPane, BorderLayout.CENTER);
+        JLabel financeTotal = new JLabel();
+        financeTotal.setSize(new Dimension(40,30));
+        double total = 0;
+        JTable jTable = (JTable) jScrollPane.getViewport().getView();
+        int rowCount = jTable.getRowCount();
+        for (int i = 0; i < rowCount; i++) {
+            total += (Double)jTable.getValueAt(i,1);
+        }
+        logger.info("公司账户费用合计：" + total);
+        if (total > 0) { //如果费用合计最后结果大于0则显示绿色，否则显示红色
+            financeTotal.setForeground(Color.BLACK);
+        } else {
+            financeTotal.setForeground(Color.RED);
+        }
+        financeTotal.setText("费用合计：" + total);
+        mainPanel.add(financeTotal, BorderLayout.SOUTH);
+        return mainPanel;
+    }
+
+    private JScrollPane listFinanceData(List<Finance> finances) {
+        Object[][] data = ConvertUtil.listToArr(finances, Finance.class);
+        String[] names = {"序号", "费用", "费用明细", "时间"};
+        CustomTableModel myTableModel = new CustomTableModel(data, names);
+        JTable jTable = new JTable(myTableModel);
+        //在CustomeTableModel里重写了父类的isCellEditable保证其不可编辑，在这里设置true仅使其可以选择
+        jTable.setEnabled(true);
+        jTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        JScrollPane scrollPane = new JScrollPane(jTable);
+        return scrollPane;
+    }
+
+    /**
+     * ======================
+     *       缴费管理
+     * ======================
+     */
+    private GmsPanel initPayManagement() {
+        GmsPanel mainPanel = new GmsPanel("payManagement");
+        mainPanel.setLayout(new GridLayout(2,1));
+        JButton orderCreateBtn = new JButton("订单创建");
+        orderCreateBtn.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                jTabbedPane.remove(new GmsPanel("payManagement"));
+                GmsPanel temp = orderCreatePanel();
+                jTabbedPane.addTab("订单创建",temp);
+                jTabbedPane.setSelectedComponent(temp);
+            }
+        });
+        JButton payOrderBtn = new JButton("缴费");
+        payOrderBtn.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                jTabbedPane.remove(new GmsPanel("payManagement"));
+                GmsPanel temp = payBillPanel();
+                jTabbedPane.addTab("缴费",temp);
+                jTabbedPane.setSelectedComponent(temp);
+            }
+        });
+        JPanel btnPanel = new JPanel();
+        btnPanel.add(orderCreateBtn);
+        btnPanel.add(payOrderBtn);
+        mainPanel.add(btnPanel);
+        JTextPane statement = new JTextPane();
+        statement.setContentType("text/html");
+        statement.setText(ConstantsUtil.PAY_STATEMENT_STR);
+        statement.setEnabled(false);
+        mainPanel.add(statement);
+        return mainPanel;
+    }
+
+    /**
+     * 订单创建界面
+     */
+    private GmsPanel orderCreatePanel() {
+        GmsPanel mainPanel = new GmsPanel("payManagement", new GridLayout(6,1));
+        JPanel[] jPanels = new JPanel[5];
+        initJPanels(jPanels);
+        //用于判断文本框是否为空
+        final List<JTextField> validateJTextList = new ArrayList<JTextField>();
+        /*改为点击创建按钮时促发订单编号生成事件*/
+//        JLabel orderSeqLab = new JLabel("订单编号:");
+//        //订单编号唯一生成，从服务器端获取
+//        final JTextField orderText = new JTextField(13);
+//        validateJTextList.add(orderText);
+//        orderText.setEnabled(false);
+//        TransJsonObject transJsonObject = new TransJsonObject(ConstantsUtil.FETCH_ORDER_SEQ);
+//        ServerRet serverRet = SSLClientUtil.sendAndReciveMsg(transJsonObject);
+//        orderText.setText(serverRet.getData().toString());
+//        jPanels[0].add(orderSeqLab);
+//        jPanels[0].add(orderText);
+        JLabel phoneLab = new JLabel("缴费者手机号:");
+        final JTextField phoneText = new JTextField(13);
+        validateJTextList.add(phoneText);
+        jPanels[0].add(phoneLab);
+        jPanels[0].add(phoneText);
+        JLabel shdPayLab = new JLabel("应付金额:");
+        final JTextField shdPayText = new JTextField(13);
+        validateJTextList.add(shdPayText);
+        jPanels[1].add(shdPayLab);
+        jPanels[1].add(shdPayText);
+        JLabel handlerLab = new JLabel("处理人员姓名:");
+        final Long handlerId = user.getId();
+        final JTextField handlerText = new JTextField(13);
+        validateJTextList.add(handlerText);
+        handlerText.setEnabled(false);
+        handlerText.setText(user.getRealName());
+        jPanels[2].add(handlerLab);
+        jPanels[2].add(handlerText);
+        JLabel gasAmountLab = new JLabel("燃气使用量:");
+        final JTextField gasAmountText = new JTextField(13);
+        validateJTextList.add(gasAmountText);
+        jPanels[3].add(gasAmountLab);
+        jPanels[3].add(gasAmountText);
+        JButton submitBtn = new JButton("创建");
+        submitBtn.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (validateText(validateJTextList)) {
+                    if(!FormatUtils.isMobileNum(phoneText.getText())) {
+                        JOptionPane.showMessageDialog(null, "手机号码格式不正确!");
+                        return;
+                    }
+                    Bill bill = new Bill();
+                    bill.setStatus((byte)0);
+                    bill.setGasUseAmount(Double.valueOf(gasAmountText.getText()));
+                    bill.setPayerPhone(phoneText.getText());
+                    bill.setHandlerName(handlerText.getText());
+                    bill.setHandlerId(handlerId);
+                    bill.setShdPayMoney(Double.valueOf(shdPayText.getText()));
+                    TransJsonObject billData = new TransJsonObject(bill, ConstantsUtil.CREATE_ORDER);
+                    ServerRet createOrderRet = SSLClientUtil.sendAndReciveMsg(billData);
+                    if (createOrderRet.isRet()) {
+                        JOptionPane.showMessageDialog(null, createOrderRet.getData().toString());
+                        jTabbedPane.remove(new GmsPanel("payManagement"));
+                        jTabbedPane.addTab("订单创建",orderCreatePanel());
+                        jTabbedPane.setSelectedComponent(new GmsPanel("payManagement"));
+                    } else {
+                        JOptionPane.showMessageDialog(null, createOrderRet.getErrmsg());
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(null, "文本框内数值不可以为空！");
+                }
+            }
+        });
+        jPanels[4].add(submitBtn);
+        for (JPanel jPanel : jPanels) {
+            mainPanel.add(jPanel);
+        }
+        return mainPanel;
+    }
+
+    /**
+     * 缴费页面
+     */
+    public GmsPanel payBillPanel() {
+        GmsPanel mainPanel = new GmsPanel("payManagement");
+        TransJsonObject transJsonObject = new TransJsonObject(ConstantsUtil.UNPAID_BILL_LIST);
+        ServerRet serverRet = SSLClientUtil.sendAndReciveMsg(transJsonObject);
+        List<Bill> bills = JSONObject.parseArray(serverRet.getData().toString(), Bill.class);
+        mainPanel.setLayout(new BorderLayout());
+        final JScrollPane jScrollPane = listBillTable(bills);
+        mainPanel.add(jScrollPane, BorderLayout.CENTER);
+        JButton confirmPayBtn = new JButton("确认缴费");
+        confirmPayBtn.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                JTable jTable = (JTable) jScrollPane.getViewport().getView();
+                int selectRowNum = jTable.getSelectedRow();
+                if (selectRowNum == -1) {//-1表示没有选择任何一行
+                    JOptionPane.showMessageDialog(null, "请选择要处理缴费的订单！");
+                } else {
+                    String orderSequence = jTable.getValueAt(jTable.getSelectedRow(),0).toString();
+                    Double payMoney = Double.valueOf(jTable.getValueAt(jTable.getSelectedRow(),2).toString());
+                    DealBill dealBill = new DealBill();
+                    dealBill.setCode(ConstantsUtil.DEAL_BILL);
+                    dealBill.setOrderSequence(orderSequence);
+                    dealBill.setPayMoney(payMoney);
+                    TransJsonObject transJsonObject = new TransJsonObject(dealBill, ConstantsUtil.DEAL_BILL);
+                    ServerRet innerServerRet = SSLClientUtil.sendAndReciveMsg(transJsonObject);
+                    //TODO 增加数据库交互操作
+                    if (innerServerRet.isRet()) {
+                        JOptionPane.showMessageDialog(null, innerServerRet.getData().toString());
+                        //同步表格显示的部分，在表格中删除一行
+                        ((DefaultTableModel)jTable.getModel()).removeRow(jTable.getSelectedRow());
+                        validate();
+                    } else {
+                        JOptionPane.showMessageDialog(null, innerServerRet.getErrmsg());
+                    }
+                }
+            }
+        });
+        mainPanel.add(confirmPayBtn, BorderLayout.SOUTH);
+        return mainPanel;
+    }
+
+    /**
+     * 展示所用订单容器
+     * @param bills
+     * @return
+     */
+    private JScrollPane listBillTable(List<Bill> bills) {
+        Object[][] data = ConvertUtil.listToArr(bills, Bill.class, "billSequence", "payerPhone", "shdPayMoney", "handlerName", "gasUseAmount", "createTime");
+        String[] names = {"订单编号", "缴费者手机号", "应缴费金额", "订单处理人员", "燃气使用量", "注册时间"};
+        CustomTableModel myTableModel = new CustomTableModel(data, names);
+        JTable jTable = new JTable(myTableModel);
+        //在UserTableModel里重写了父类的isCellEditable保证其不可编辑，在这里设置true仅使其可以选择
+        jTable.setEnabled(true);
+        jTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        JScrollPane scrollPane = new JScrollPane(jTable);
+        return scrollPane;
+    }
+
 }

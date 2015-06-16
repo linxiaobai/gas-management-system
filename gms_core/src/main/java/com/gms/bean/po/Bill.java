@@ -35,25 +35,6 @@ public class Bill implements Serializable{
      */
     private String handlerName;
 
-    /**
-     * 滞纳金
-     */
-    private Double lateFee;
-
-    /**
-     * 实际缴纳金额
-     */
-    private Double actPayMoney;
-
-    /**
-     * 应缴费日期
-     */
-    private Timestamp shdPayDate;
-
-    /**
-     * 实际缴费日期
-     */
-    private Timestamp actPayDate;
 
     /**
      * 账单状态 0 未缴费  1 已缴费
@@ -121,38 +102,6 @@ public class Bill implements Serializable{
 
     public void setHandlerName(String handlerName) {
         this.handlerName = handlerName;
-    }
-
-    public Double getLateFee() {
-        return lateFee;
-    }
-
-    public void setLateFee(Double lateFee) {
-        this.lateFee = lateFee;
-    }
-
-    public Double getActPayMoney() {
-        return actPayMoney;
-    }
-
-    public void setActPayMoney(Double actPayMoney) {
-        this.actPayMoney = actPayMoney;
-    }
-
-    public Timestamp getShdPayDate() {
-        return shdPayDate;
-    }
-
-    public void setShdPayDate(Timestamp shdPayDate) {
-        this.shdPayDate = shdPayDate;
-    }
-
-    public Timestamp getActPayDate() {
-        return actPayDate;
-    }
-
-    public void setActPayDate(Timestamp actPayDate) {
-        this.actPayDate = actPayDate;
     }
 
     public Byte getStatus() {

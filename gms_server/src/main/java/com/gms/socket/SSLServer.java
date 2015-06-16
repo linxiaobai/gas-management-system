@@ -1,15 +1,13 @@
 package com.gms.socket;
 
+import com.gms.service.SystemParamService;
+import com.gms.service.impl.SystemParamServiceImpl;
 import com.gms.swing.GmsBaseFrame;
 import com.gms.timer.TimerStart;
 import com.gms.util.ConstantsUtil;
-import com.gms.util.FormatUtils;
 import com.gms.util.SystemConstantUtils;
 import com.gms.util.date.DateUtils;
 import com.gms.util.threadpool.ThreadPoolManager;
-
-import java.io.*;
-import java.util.Timer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,10 +19,15 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.net.Socket;
 import java.security.KeyStore;
 import java.util.Date;
 import java.util.LinkedList;
+import java.util.Timer;
 
 
 /**
@@ -40,7 +43,7 @@ import java.util.LinkedList;
  */
 public class SSLServer extends GmsBaseFrame{
     private static Logger logger = LoggerFactory.getLogger(SSLServer.class);
-
+    private SystemParamService systemParamService = new SystemParamServiceImpl();
 
     /*swing 成员变量*/
     private JTextArea jTextArea = null;
@@ -55,6 +58,21 @@ public class SSLServer extends GmsBaseFrame{
     private static final String SERVER_TRUST_KEY_STORE_PASSWORD = SystemConstantUtils.getSystemDataSource().get("serverTrustKey");;
     private SSLServerSocket serverSocket;
     private LinkedList<ClientConn> clients = new LinkedList<ClientConn>(); //存放客户端连接对象
+
+
+    protected void quit() {
+        int confirmRet;
+        String msg = "您 现 在 要 关 闭 系 统 吗 ?";
+        confirmRet = JOptionPane.showConfirmDialog(null, msg, "提示", JOptionPane.YES_NO_OPTION);
+        //不知道为什么在主界面点击关闭按钮时，对应值会被重置为3,导致点否仍然关闭，所以在这里重新赋值一下
+        setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+        if(confirmRet == JOptionPane.YES_OPTION) {
+            systemParamService.updateSequence();
+            setVisible(false);
+            System.exit(0);
+        }//End if(flag == JOptionPane.YES_OPTION)
+        return;
+    }
 
     public SSLServer(String name) {
         super(name);
@@ -161,8 +179,8 @@ public class SSLServer extends GmsBaseFrame{
             //加入到线程池的工作队列中防止多用户时线程阻塞
             ThreadPoolManager.getThreadPool().execute(this);
         }
-
         private void send(String msg) {
+            //socket支持的最大传输数据大小为8M
             DataOutputStream dos = null;
             try {
                 dos = new DataOutputStream(socket.getOutputStream());
@@ -238,6 +256,5 @@ public class SSLServer extends GmsBaseFrame{
                 this.dispose();
             }
         }
-
     }
 }
